@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wheel of Names</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎤 Wheel of Names</h1>
+    <div class="top-bar">
+      <label class="force-toggle">
+        <span class="emoji-toggle">🎯</span>
+        <input type="checkbox" id="force-winner-toggle" />
+      </label>
+      <button id="toggle-dark">Dark Mode</button>
+      <button id="reset-names">Reset</button>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <section id="input-area">
+      <input type="text" id="name-input" placeholder="Enter name and press Enter" />
+    </section>
+
+    <section id="spin-area">
+      <button id="spin" onclick="spin()">SPIN</button>
+      <div id="winner-display">Winner: <span id="winner-name-display">--</span></div>
+    </section>
+
+    <section id="wheel-container">
+      <canvas id="wheel" width="400" height="400"></canvas>
+      <div id="wheel-center-logo"></div>
+    </section>
+  </main>
+
+  <div id="winner-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">🎉 Winner!</div>
+      <div class="modal-body">
+        <div id="winner-name">Name</div>
+      </div>
+      <div class="modal-footer">
+        <button id="close-modal">Close</button>
+        <button id="remove-winner">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <audio id="spin-sound" src="spin.mp3"></audio>
+  <audio id="win-sound" src="win.mp3"></audio>
+  <script src="script.js"></script>
+</body>
+</html>
