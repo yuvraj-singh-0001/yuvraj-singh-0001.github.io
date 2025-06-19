@@ -15,6 +15,18 @@ const canvas = document.getElementById("wheel"),
 
 let names = [];
 let startAngle = 0, spinVel = 0, spinning = false, frame;
+let selectedVoice = null;
+
+function setVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  selectedVoice = voices.find(voice =>
+    voice.name.includes("Google UK English Female") ||
+    voice.name.includes("Microsoft Zira") ||
+    voice.name.includes("Neelam") ||
+    voice.name.toLowerCase().includes("female")
+  );
+}
+window.speechSynthesis.onvoiceschanged = setVoice;
 
 function drawWheel() {
   const N = names.length || 6;
@@ -77,8 +89,21 @@ function showWinner() {
   winnerNameEl.textContent = winner || "No one";
   winnerDisplayEl.textContent = winner || "--";
   winModal.style.display = "flex";
-  if (typeof confetti === "function") confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+
+  if (typeof confetti === "function") {
+    confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+  }
+
   if (winSound) winSound.play();
+
+  if (winner) {
+    const msg = new SpeechSynthesisUtterance(`The winner is ${winner}`);
+    msg.pitch = 1.2;
+    msg.rate = 1;
+    msg.volume = 1;
+    if (selectedVoice) msg.voice = selectedVoice;
+    speechSynthesis.speak(msg);
+  }
 }
 
 nameInput.addEventListener("keydown", e => {
@@ -113,6 +138,34 @@ resetBtn.onclick = () => {
 const emojiToggle = document.querySelector(".emoji-toggle");
 forceToggle.addEventListener("change", () => {
   emojiToggle.textContent = "🎯";
+});
+
+// ✅ Touch swipe
+let touchStartX = 0;
+canvas.addEventListener("touchstart", (e) => {
+  if (spinning) return;
+  touchStartX = e.touches[0].clientX;
+});
+canvas.addEventListener("touchend", (e) => {
+  if (spinning) return;
+  const touchEndX = e.changedTouches[0].clientX;
+  const diff = touchEndX - touchStartX;
+  if (Math.abs(diff) > 50) {
+    spin();
+  }
+});
+
+// ✅ Tap to spin (wheel + logo)
+canvas.addEventListener("click", () => {
+  if (!spinning) spin();
+});
+document.getElementById("wheel-center-logo").addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (!spinning) spin();
+});
+document.getElementById("wheel-center-logo").addEventListener("touchstart", (e) => {
+  e.stopPropagation();
+  if (!spinning) spin();
 });
 
 drawWheel();
